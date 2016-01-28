@@ -1,10 +1,10 @@
 package server
 
 type user struct {
-	Name string `xml:"name"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
 type users struct {
-	Users []user `xml:"user"`
+	Users []user `json:"user"`
 }
-
-var usersMap = make(map[string]user)
