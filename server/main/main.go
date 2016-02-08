@@ -11,12 +11,13 @@ func main() {
 	r := mux.NewRouter()
 	uc := server.NewUserController()
 	fmt.Println("Attempttostartserveratport....8181")
-	fmt.Println("map contents")
 	r.HandleFunc("/", uc.WelcomeHandler)
 	//map handlers to URL
 	r.HandleFunc("/Users", uc.GetUsersHandler).Methods("GET")
-	r.HandleFunc("/Users/{id}", uc.GetUserByIDHandler).Methods("GET")
+	r.HandleFunc("/User/{id}", uc.GetUserByIDHandler).Methods("GET")
+	r.HandleFunc("/User/", uc.UserCreate).Methods("POST")
 	http.Handle("/", r) //register routes with net/http
+
 	server.Startserver()
 
 }
