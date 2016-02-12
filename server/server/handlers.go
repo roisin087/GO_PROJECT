@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
 	"log"
@@ -94,43 +95,46 @@ func SearchByIdHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//var decoder = schema.NewDecoder()
+var decoder = schema.NewDecoder()
 
 func (uc UserController) UserCreate(w http.ResponseWriter, r *http.Request) {
+	sessionCopy := database.GetSession()
+	defer sessionCopy.Close()
 
-	/*not working through schema
-	user := User{}
-	if err := r.ParseForm(); err != nil {
-		log.Println("Got error parsing form: ", err)
-	}
-	decoder := schema.NewDecoder()
-	if err := decoder.Decode(&user, r.PostForm); err != nil {
-		log.Println("Got error decoding form: ", err)
-	}
-	usersMap[user.ID] = user
+	//not working through schema
+	/*
+		var user User
+		err := r.ParseForm()
+		if err != nil {
+			log.Println("Form could not be parsed")
+		}
+		err2 := decoder.Decode(&user, r.PostForm)
+		if err2 != nil {
+			log.Println("Got error decoding form: ", err2)
+		}
+		fmt.Println("User:" + user.Name)
 	*/
+	//end gorilla schema
+
 	i := GetMyKey(r)
 	fmt.Println("gorilla context not available here outside of request key empty" + i)
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	log.Println(string(body))
 	var u User
 	err = json.Unmarshal([]byte(string(body)), &u)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 	log.Println("Name" + u.Name)
-	sessionCopy := database.GetSession()
-	defer sessionCopy.Close()
 
 	users := sessionCopy.DB("MyDB").C("MyCollection")
 	err = users.Insert(User{ID: u.ID, Name: u.Name, Email: u.Email})
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
 	}
 	w.WriteHeader(http.StatusCreated)
 	fmt.Println("created")

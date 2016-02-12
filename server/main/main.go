@@ -14,8 +14,8 @@ func main() {
 	r.HandleFunc("/", uc.WelcomeHandler)
 	//map handlers to URL
 	r.HandleFunc("/Users", uc.GetUsersHandler).Methods("GET")
-	r.HandleFunc("/User/{id}", uc.GetUserByIDHandler).Methods("GET")
-	r.HandleFunc("/User/", uc.UserCreate).Methods("POST")
+	r.HandleFunc("/Users/{id}", uc.GetUserByIDHandler).Methods("GET")
+	r.HandleFunc("/Users/", uc.UserCreate).Methods("POST")
 	http.Handle("/", r) //register routes with net/http
 
 	server.Startserver()

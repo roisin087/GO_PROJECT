@@ -10,6 +10,7 @@ type Mongodb struct {
 }
 
 func GetSession() (session *mgo.Session) {
+
 	if session == nil {
 		var err error
 		session, err = mgo.Dial("localhost:27017")
@@ -18,6 +19,5 @@ func GetSession() (session *mgo.Session) {
 		}
 	}
 	session.SetMode(mgo.Monotonic, true)
-
 	return session.Copy()
 }

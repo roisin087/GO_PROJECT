@@ -1,15 +1,21 @@
 package client
 
 import (
+	"bytes"
 	"client/client/model"
+	"encoding/json"
 	"fmt"
-	"gopkg.in/mgo.v2/bson"
-	"io/ioutil"
+	//	"io/ioutil"
 	"log"
 	"net/http"
-
 	"time"
 )
+
+type User struct {
+	ID    int32
+	Name  string
+	Email string
+}
 
 func Publish(text string, delay time.Duration) {
 	go func() {
@@ -20,69 +26,23 @@ func Publish(text string, delay time.Duration) {
 	}() // Note the parentheses. We must call the anonymous function.
 }
 
-func GetResponse(url string) {
+func GetResponse(url string) string {
 	// request http api
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
-	}
+		log.Fatal("Unexpected Status code", res.StatusCode)
+		return res.Status
 
-	// read body
-	body, err := ioutil.ReadAll(res.Body)
-	res.Body.Close()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	if res.StatusCode != 200 {
 		log.Fatal("Unexpected status code", res.StatusCode)
+		return res.Status
 	}
 
-	fmt.Printf("Body: %s\n", body)
+	//fmt.Printf("Body: %s\n", body)
+	return res.Status
 
-}
-
-type user struct {
-	ID    string
-	Name  string
-	Email string
-}
-
-//not enough arguments to return error ??
-/*
-// GetBSON implements bson.Getter.
-func (u User) GetBSON() (interface{}, error) {
-
-	return struct {
-		ID    string `json:"id" bson:"id"`
-		Name  string `json:"name" bson:"name"`
-		Email string `json:"email" bson:"email"`
-	}{
-		ID:    u.ID,
-		Name:  u.Name,
-		Email: u.Email,
-	}
-}
-*/
-// SetBSON implements bson.Setter.
-func (u *user) SetBSON(raw bson.Raw) error {
-
-	decoded := new(struct {
-		ID    string `json:"id" bson:"id"`
-		Name  string `json:"name" bson:"name"`
-		Email string `json:"email" bson:"email"`
-	})
-
-	bsonErr := raw.Unmarshal(decoded)
-
-	if bsonErr == nil {
-		u.ID = decoded.ID
-		u.Name = decoded.Name
-		u.Email = decoded.Email
-		return nil
-	} else {
-		return bsonErr
-	}
 }
 
 func CheckConnection() {
@@ -91,4 +51,14 @@ func CheckConnection() {
 	} else {
 		fmt.Println("Not Connected")
 	}
+}
+
+func PostRequest(id int32, name string, email string) string {
+	u := &User{id, name, email}
+	buf, _ := json.Marshal(u)
+	body := bytes.NewBuffer(buf)
+	r, _ := http.Post("http://localhost:8181/Users/", "text/json", body)
+	//response, _ := ioutil.ReadAll(r.Body)
+	//fmt.Println(string(response))
+	return "Post" + r.Status
 }

@@ -1,34 +1,21 @@
 package main
 
 import (
-	"bytes"
 	"client/client/controller"
-	"encoding/json"
+
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	//"time"
+	//"io/ioutil"
+	//"math/rand"
+	//"strconv"
+	"time"
 )
 
 func main() {
 
 	client.CheckConnection()
 
-	type User struct {
-		ID    int32
-		Name  string
-		Email string
-	}
-
-	u := &User{1, "Adam", "adam@gmail.com"}
-	buf, _ := json.Marshal(u)
-	body := bytes.NewBuffer(buf)
-	r, _ := http.Post("http://localhost:8181/User/", "text/json", body)
-	response, _ := ioutil.ReadAll(r.Body)
-	fmt.Println(string(response))
-
-	fmt.Println("\nCalling api for user with id of 1")
-	client.GetResponse("http://localhost:8181/User/1")
+	//fmt.Println("\nCalling api for user with id of 1")
+	//client.GetResponse("http://localhost:8181/Users/1")
 
 	// call publish method that will block the goroutine which sends a http request to the api
 	/*
@@ -41,25 +28,48 @@ func main() {
 
 		fmt.Println("\n\nTen seconds later: I’m leaving now.")
 	*/
-	/*
-		url := "http://localhost:8181/User/"
-		fmt.Println("URL:>", url)
 
-		var jsonStr = []byte(`{"id":5,"name":"Joe","email":"h@gmail.com"}`)
-		req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
-		req.Header.Set("X-Custom-Header", "myvalue")
-		req.Header.Set("Content-Type", "application/json")
+	var channel1 chan string = make(chan string)
+	var channel2 chan string = make(chan string)
+	var channel3 chan string = make(chan string)
+	for i := 0; i < 2; i++ {
+		go sendPostRequest(channel1, "channel 1", 100*time.Millisecond)
+	}
+	for i := 0; i < 2; i++ {
+		go sendGetRequest(channel2, "channel 2", 1000*time.Millisecond)
+	}
+	for i := 0; i < 2; i++ {
+		go sendPostRequest(channel3, "channel 3", 500*time.Millisecond)
+	}
+	for i := 0; i < 2; i++ {
+		go sendGetRequest(channel2, "channel 2", 800*time.Millisecond)
+	}
+	go receiveFromChannel(channel1, "Receiving from channel 1: ", 0*time.Millisecond)
+	go receiveFromChannel(channel2, "Receiving from channel 2: ", 0*time.Millisecond)
+	go receiveFromChannel(channel3, "Receiving from channel 3: ", 0*time.Millisecond)
+	go receiveFromChannel(channel2, "Receiving from channel 3: ", 0*time.Millisecond)
+	var input string
+	fmt.Scanln(&input)
 
-		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			panic(err)
-		}
-		defer resp.Body.Close()
+}
 
-		fmt.Println("response Status:", resp.Status)
-		fmt.Println("response Headers:", resp.Header)
-		body, _ := ioutil.ReadAll(resp.Body)
-		fmt.Println("response Body:", string(body))*/
+func sendPostRequest(channel chan string, msg string, delay time.Duration) {
+	time.Sleep(delay)
+	channel <- client.PostRequest(4, "nicola", "n@live.ie")
+	fmt.Println("Post Request sent through " + msg)
+
+}
+
+func sendGetRequest(channel chan string, msg string, delay time.Duration) {
+	time.Sleep(delay)
+	channel <- client.GetResponse("http://localhost:8181/Users/1")
+	fmt.Println("Get Request sent through " + msg)
+}
+
+func receiveFromChannel(channel <-chan string, msg string, delay time.Duration) { // returns receive-only channel of strings.
+	time.Sleep(delay)
+	for m := range channel {
+		fmt.Println(msg + m)
+	}
 
 }
