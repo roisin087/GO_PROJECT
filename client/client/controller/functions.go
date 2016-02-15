@@ -2,28 +2,18 @@ package client
 
 import (
 	"bytes"
-	"client/client/model"
 	"encoding/json"
 	"fmt"
+	"github.com/client/client/model"
 	//	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 )
 
 type User struct {
 	ID    int32
 	Name  string
 	Email string
-}
-
-func Publish(text string, delay time.Duration) {
-	go func() {
-		time.Sleep(delay)
-		fmt.Println("ALERT:", text)
-		GetResponse("http://localhost:8181/Users")
-
-	}() // Note the parentheses. We must call the anonymous function.
 }
 
 func GetResponse(url string) string {

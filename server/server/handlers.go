@@ -6,11 +6,11 @@ import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
+	"github.com/server/database"
 	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"server/database"
 	"strconv"
 )
 
@@ -50,9 +50,7 @@ func (uc UserController) GetUsersHandler(w http.ResponseWriter, r *http.Request)
 
 func (uc UserController) WelcomeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Welcome")
-	//	if !CheckConnection() {
-	//		Startserver()
-	//	}
+
 }
 
 func (uc UserController) GetUserByIDHandler(w http.ResponseWriter, r *http.Request) {

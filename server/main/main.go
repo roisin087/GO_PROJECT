@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/server/server"
 	"net/http"
-	"server/server"
 )
 
 func main() {

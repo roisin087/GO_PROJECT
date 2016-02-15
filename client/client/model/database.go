@@ -11,7 +11,6 @@ func ConnectToMongo() bool {
 	ret := false
 	fmt.Println("enter main - connecting to mongo")
 
-	// tried doing this - doesn't work as intended
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Detected panic")
@@ -32,7 +31,7 @@ func ConnectToMongo() bool {
 			fmt.Println("Got a collection object")
 			ret = true
 		}
-	} else { // never gets here
+	} else {
 		fmt.Println("Unable to connect to local mongo instance!")
 	}
 	return ret
