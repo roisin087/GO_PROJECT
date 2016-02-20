@@ -3,10 +3,10 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/context"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/schema"
-	"github.com/server/database"
+	"github.com/roisin087/gorilla/context"
+	"github.com/roisin087/gorilla/mux"
+	//"github.com/roisin087/gorilla/schema"
+	"github.com/roisin087/server/database"
 	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
 	"log"
@@ -93,7 +93,7 @@ func SearchByIdHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-var decoder = schema.NewDecoder()
+//var decoder = schema.NewDecoder()
 
 func (uc UserController) UserCreate(w http.ResponseWriter, r *http.Request) {
 	sessionCopy := database.GetSession()

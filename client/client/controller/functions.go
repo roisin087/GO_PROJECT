@@ -3,8 +3,6 @@ package client
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"github.com/client/client/model"
 	//	"io/ioutil"
 	"log"
 	"net/http"
@@ -33,14 +31,6 @@ func GetResponse(url string) string {
 	//fmt.Printf("Body: %s\n", body)
 	return res.Status
 
-}
-
-func CheckConnection() {
-	if model.ConnectToMongo() {
-		fmt.Println("Connected")
-	} else {
-		fmt.Println("Not Connected")
-	}
 }
 
 func PostRequest(id int32, name string, email string) string {

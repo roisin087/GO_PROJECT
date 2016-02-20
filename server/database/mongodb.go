@@ -18,6 +18,5 @@ func GetSession() (session *mgo.Session) {
 			panic(err)
 		}
 	}
-	session.SetMode(mgo.Monotonic, true)
 	return session.Copy()
 }
