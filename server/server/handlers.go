@@ -122,7 +122,7 @@ func (uc UserController) UserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println(string(body))
 	var u User
-	err = json.Unmarshal([]byte(string(body)), &u)
+	err = bson.Unmarshal([]byte(string(body)), &u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
@@ -139,7 +139,6 @@ func (uc UserController) UserCreate(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// GetMyKey returns a value for this package from the request values.
 func GetMyKey(r *http.Request) string {
 	if rv := context.Get(r, mykey); rv != nil {
 		return rv.(string)
@@ -147,7 +146,6 @@ func GetMyKey(r *http.Request) string {
 	return ""
 }
 
-// SetMyKey sets a value for this package in the request values.
 func SetMyKey(r *http.Request, val string) {
 	context.Set(r, mykey, val)
 }
