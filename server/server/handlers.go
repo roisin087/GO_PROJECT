@@ -70,7 +70,7 @@ func SearchByIdHandler(w http.ResponseWriter, r *http.Request) {
 	i64, _ := strconv.ParseInt(GetMyKey(r), 10, 64)
 	i := int32(i64)
 	fmt.Println(i)
-	fmt.Println("Gorilla context Key" + GetMyKey(r))
+	fmt.Println("Gorilla context Key " + GetMyKey(r))
 
 	user := User{}
 
@@ -122,7 +122,7 @@ func (uc UserController) UserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println(string(body))
 	var u User
-	err = bson.Unmarshal([]byte(string(body)), &u)
+	err = json.Unmarshal([]byte(string(body)), &u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
